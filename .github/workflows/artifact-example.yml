@@ -1,0 +1,34 @@
+name: Math Workflow
+on: [push]
+
+jobs:
+  calculate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Calculate sum
+        run: |
+          echo $((3 + 5)) > sum.txt
+          echo "Сумма 3 и 5 сохранена в sum.txt"
+
+      - name: Upload sum artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: sum-artifact
+          path: sum.txt
+
+  display:
+    runs-on: ubuntu-latest
+    needs: calculate
+    steps:
+      - name: Download sum artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: sum-artifact
+
+      - name: Display the result
+        run: |
+          result=$(cat sum.txt)
+          echo "Результат: $result"
