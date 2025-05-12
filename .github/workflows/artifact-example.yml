@@ -1,34 +1,37 @@
-name: Math Workflow
-on: [push]
+name: File Creation Workflow
+on:
+  create:
+    branches:
+      - main
 
 jobs:
-  calculate:
+  create_file:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Calculate sum
+      - name: Create a text file
         run: |
-          echo $((3 + 5)) > sum.txt
-          echo "Сумма 3 и 5 сохранена в sum.txt"
+          echo "Hello, this is a sample text file." > sample.txt
+          echo "Файл sample.txt создан."
 
-      - name: Upload sum artifact
+      - name: Upload text file as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: sum-artifact
-          path: sum.txt
+          name: sample-artifact
+          path: sample.txt
 
-  display:
+  process_file:
     runs-on: ubuntu-latest
-    needs: calculate
+    needs: create_file
     steps:
-      - name: Download sum artifact
+      - name: Download text file artifact
         uses: actions/download-artifact@v3
         with:
-          name: sum-artifact
+          name: sample-artifact
 
-      - name: Display the result
+      - name: Read and process the text file
         run: |
-          result=$(cat sum.txt)
-          echo "Результат: $result"
+          content=$(cat sample.txt)
+          echo "Содержимое файла: $content"
